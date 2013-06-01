@@ -7,7 +7,7 @@ require 'pry'
 class CopyAsset
   include Sidekiq::Worker
 
-  sidekiq_options :retry => 1
+  sidekiq_options :retry => false
 
   def perform(path, url)
     file = open(url)
