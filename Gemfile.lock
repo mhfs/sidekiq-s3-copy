@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/mhfs/sidekiq-failures.git
+  revision: 50cb5e15080dbca4b4d36bf03a141ce004c12c35
+  specs:
+    sidekiq-failures (0.1.0)
+      sidekiq (>= 2.2.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -63,5 +70,6 @@ DEPENDENCIES
   pry
   rack
   sidekiq
+  sidekiq-failures!
   sinatra
   slim

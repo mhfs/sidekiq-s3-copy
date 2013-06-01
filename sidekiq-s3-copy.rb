@@ -1,10 +1,13 @@
 require 'sidekiq'
+require 'sidekiq-failures'
 require 'fog'
 require 'open-uri'
 require 'pry'
 
 class CopyAsset
   include Sidekiq::Worker
+
+  sidekiq_options :retry => 1
 
   def perform(url, path)
     file = open(URI.escape("#{url}#{path}"))
