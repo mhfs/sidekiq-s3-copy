@@ -7,7 +7,7 @@ class CopyAsset
   include Sidekiq::Worker
 
   def perform(url, path)
-    file = open("#{url}#{path}")
+    file = open(URI.escape("#{url}#{path}"))
 
     bucket.files.create(
       key:    path,
