@@ -10,7 +10,7 @@ class CopyAsset
   sidekiq_options :retry => 1
 
   def perform(path, url)
-    file = open(URI.escape("#{url}"))
+    file = open(url)
 
     bucket.files.create(
       key:    path,
