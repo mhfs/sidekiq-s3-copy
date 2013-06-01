@@ -9,8 +9,8 @@ class CopyAsset
 
   sidekiq_options :retry => 1
 
-  def perform(url, path)
-    file = open(URI.escape("#{url}#{path}"))
+  def perform(path, url)
+    file = open(URI.escape("#{url}"))
 
     bucket.files.create(
       key:    path,
@@ -40,7 +40,6 @@ if ENV['ENQUEUE']
   )
 
   bucket = connection.directories.get(ENV['ORIGIN_BUCKET'])
-  url    = "https://#{ENV['ORIGIN_BUCKET']}.s3.amazonaws.com/"
   files  = bucket.files
 
   puts "Enqueueing files for asynchronous copy"
@@ -48,7 +47,8 @@ if ENV['ENQUEUE']
   i = 0
   files.each do |file|
     i += 1
-    CopyAsset.perform_async(url, file.key)
+    url = bucket.files.new(:key => file.key).url(Time.now + 86400)
+    CopyAsset.perform_async(file.key, url)
   end
 
   puts "Enqueued #{i} jobs"
