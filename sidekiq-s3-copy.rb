@@ -29,22 +29,24 @@ class CopyAsset
   end
 end
 
-connection = Fog::Storage.new(
-  provider:              'AWS',
-  aws_access_key_id:     ENV['ORIGIN_KEY'],
-  aws_secret_access_key: ENV['ORIGIN_SECRET']
-)
+if ENV['ENQUEUE']
+  connection = Fog::Storage.new(
+    provider:              'AWS',
+    aws_access_key_id:     ENV['ORIGIN_KEY'],
+    aws_secret_access_key: ENV['ORIGIN_SECRET']
+  )
 
-bucket = connection.directories.get(ENV['ORIGIN_BUCKET'])
-url    = "https://#{ENV['ORIGIN_BUCKET']}.s3.amazonaws.com/"
-files  = bucket.files
+  bucket = connection.directories.get(ENV['ORIGIN_BUCKET'])
+  url    = "https://#{ENV['ORIGIN_BUCKET']}.s3.amazonaws.com/"
+  files  = bucket.files
 
-puts "Enqueueing files for asynchronous copy"
+  puts "Enqueueing files for asynchronous copy"
 
-i = 0
-files.each do |file|
-  i += 1
-  CopyAsset.perform_async(url, file.key)
+  i = 0
+  files.each do |file|
+    i += 1
+    CopyAsset.perform_async(url, file.key)
+  end
+
+  puts "Enqueued #{i} jobs"
 end
-
-puts "Enqueued #{i} jobs"
